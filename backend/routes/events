@@ -1,1 +1,54 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+let activities = [
+  {
+    id: 1,
+    title: "Yoga in the Park",
+    interest: "Wellness",
+    location: "Singapore",
+    lat: 1.3521,
+    lng: 103.8198,
+    date: "2026-02-12"
+  },
+  {
+    id: 2,
+    title: "Coding Meetup",
+    interest: "Tech",
+    location: "Singapore",
+    lat: 1.3000,
+    lng: 103.8000,
+    date: "2026-02-13"
+  }
+];
+
+// Filter by interest, location, date
+app.get('/activities', (req, res) => {
+  const { interest, location, date } = req.query;
+  let results = activities;
+
+  if (interest) results = results.filter(a => a.interest === interest);
+  if (location) results = results.filter(a => a.location === location);
+  if (date) results = results.filter(a => a.date === date);
+
+  res.json(results);
+});
+
+// Location-based query (within 5km radius)
+app.get('/activities/nearby', (req, res) => {
+  const { lat, lng } = req.query;
+  const radius = 0.05; // ~5km in degrees
+
+  const nearby = activities.filter(a =>
+    Math.abs(a.lat - lat) <= radius && Math.abs(a.lng - lng) <= radius
+  );
+
+  res.json(nearby);
+});
+
+app.listen(3000, () => console.log('Backend running on http://localhost:3000'));
