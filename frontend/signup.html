@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ActivityApp - Sign Up</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Your existing scripts -->
+    <script src="utils.js"></script>  <!-- REPLACE utils.js with this -->
+    <script src="matching-service-complete.js"></script>
+    <script src="signup.js"></script>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <h2 class="nav-logo" onclick="window.location.href='index.html'">ActivityApp</h2>
+        </div>
+    </nav>
+
+    <!-- Signup Container -->
+    <div class="auth-container">
+        <div class="auth-card signup-card">
+            <!-- Progress Indicator -->
+            <div class="progress-bar">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <span class="step-label">Account</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <span class="step-label">Profile</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <span class="step-label">Interests</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Account Creation -->
+            <div class="signup-step" id="step1">
+                <div class="auth-header">
+                    <h1 class="auth-title">Create Your Account</h1>
+                    <p class="auth-subtitle">Join our community and start exploring</p>
+                </div>
+
+                <form id="accountForm" class="auth-form">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="firstName">First Name</label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                placeholder="John" 
+                                required
+                                autocomplete="given-name">
+                        </div>
+                        <div class="input-group">
+                            <label for="lastName">Last Name</label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                placeholder="Doe" 
+                                required
+                                autocomplete="family-name">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="signupEmail" 
+                            placeholder="you@example.com" 
+                            required
+                            autocomplete="email">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="signupPassword">Password</label>
+                        <input 
+                            type="password" 
+                            id="signupPassword" 
+                            placeholder="Create a strong password" 
+                            required
+                            autocomplete="new-password"
+                            minlength="8">
+                        <div class="password-strength" id="passwordStrength"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            placeholder="Confirm your password" 
+                            required
+                            autocomplete="new-password">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span>Continue</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>or continue with</span>
+                </div>
+
+                <button class="btn btn-secondary" onclick="showToast('Google OAuth coming soon!', 'info')">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.1713 8.36819H17.5001V8.33337H10.0001V11.6667H14.7096C14.0225 13.6071 12.1763 15 10.0001 15C7.23882 15 5.00007 12.7613 5.00007 10C5.00007 7.23884 7.23882 5.00004 10.0001 5.00004C11.2746 5.00004 12.4342 5.48092 13.3171 6.26633L15.6742 3.90925C14.1859 2.52217 12.195 1.66671 10.0001 1.66671C5.39799 1.66671 1.66675 5.39796 1.66675 10C1.66675 14.6021 5.39799 18.3334 10.0001 18.3334C14.6022 18.3334 18.3334 14.6021 18.3334 10C18.3334 9.44129 18.2759 8.89588 18.1713 8.36819Z" fill="#FFC107"/>
+                        <path d="M2.6275 6.12125L5.36542 8.12917C6.10625 6.29501 7.90042 5.00001 10.0004 5.00001C11.2746 5.00001 12.4342 5.48084 13.3171 6.26625L15.6742 3.90917C14.1859 2.52209 12.195 1.66667 10.0004 1.66667C6.79958 1.66667 4.02333 3.47376 2.6275 6.12125Z" fill="#FF3D00"/>
+                        <path d="M10.0001 18.3333C12.1526 18.3333 14.1088 17.5095 15.5871 16.17L13.0079 13.9875C12.1429 14.6452 11.0863 15.0008 10.0001 15C7.83257 15 5.99215 13.618 5.29882 11.6892L2.58215 13.7829C3.96048 16.4817 6.76132 18.3333 10.0001 18.3333Z" fill="#4CAF50"/>
+                        <path d="M18.1713 8.36814H17.5V8.33331H10V11.6667H14.7096C14.3809 12.5902 13.7889 13.3972 13.0067 13.988L13.0079 13.9871L15.5871 16.1696C15.4046 16.3354 18.3333 14.1666 18.3333 9.99998C18.3333 9.44123 18.2758 8.89581 18.1713 8.36814Z" fill="#1976D2"/>
+                    </svg>
+                    Google
+                </button>
+
+                <p class="auth-footer">
+                    Already have an account? 
+                    <a href="index.html" class="auth-link">Sign in</a>
+                </p>
+            </div>
+
+            <!-- Step 2: Profile Setup -->
+            <div class="signup-step" id="step2" style="display: none;">
+                <div class="auth-header">
+                    <h1 class="auth-title">Tell Us About Yourself</h1>
+                    <p class="auth-subtitle">Help others get to know you better</p>
+                </div>
+
+                <form id="profileForm" class="auth-form">
+                    <div class="input-group">
+                        <label for="bio">Bio</label>
+                        <textarea 
+                            id="bio" 
+                            rows="4" 
+                            placeholder="Tell us a bit about yourself, what you enjoy, what you're looking for..."
+                            maxlength="300"></textarea>
+                        <span class="char-counter"><span id="bioCount">0</span>/300</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="location">Location</label>
+                        <input 
+                            type="text" 
+                            id="location" 
+                            placeholder="e.g., San Francisco, CA">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="age">Age</label>
+                        <input 
+                            type="number" 
+                            id="age" 
+                            placeholder="Your age" 
+                            min="13" 
+                            max="120">
+                    </div>
+
+                    <div class="form-actions space-between">
+                        <button type="button" class="btn btn-text" onclick="goToStep(1)">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Back</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <span>Continue</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 3: Interests -->
+            <div class="signup-step" id="step3" style="display: none;">
+                <div class="auth-header">
+                    <h1 class="auth-title">What Are You Interested In?</h1>
+                    <p class="auth-subtitle">Select or add your interests to find relevant activities</p>
+                </div>
+
+                <form id="interestsForm" class="auth-form">
+                    <!-- Popular Interests -->
+                    <div class="interests-section">
+                        <label class="section-label">Popular Interests</label>
+                        <div class="interests-grid" id="popularInterests">
+                            <button type="button" class="interest-chip" data-interest="hiking">
+                                🥾 Hiking
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="photography">
+                                📷 Photography
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="cooking">
+                                👨‍🍳 Cooking
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="yoga">
+                                🧘 Yoga
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="gaming">
+                                🎮 Gaming
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="reading">
+                                📚 Reading
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="music">
+                                🎵 Music
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="fitness">
+                                💪 Fitness
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="travel">
+                                ✈️ Travel
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="art">
+                                🎨 Art
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="cycling">
+                                🚴 Cycling
+                            </button>
+                            <button type="button" class="interest-chip" data-interest="movies">
+                                🎬 Movies
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add Custom Interest -->
+                    <div class="input-group">
+                        <label for="customInterest">Add Your Own</label>
+                        <div class="custom-input">
+                            <input 
+                                type="text" 
+                                id="customInterest" 
+                                placeholder="Type an interest and press Enter..."
+                                maxlength="30">
+                            <button type="button" class="btn-icon" onclick="addCustomInterest()">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Interests -->
+                    <div class="selected-interests" id="selectedInterestsContainer" style="display: none;">
+                        <label class="section-label">Your Interests (<span id="interestCount">0</span>)</label>
+                        <div class="interests-list" id="selectedInterests"></div>
+                    </div>
+
+                    <div class="form-actions space-between">
+                        <button type="button" class="btn btn-text" onclick="goToStep(2)">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Back</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <span>Complete Signup</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.6 7.45801L9.16667 14.8913L5.5 11.2247" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+ 
+</body>
+</html>

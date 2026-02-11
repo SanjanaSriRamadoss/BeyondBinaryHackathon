@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ActivityApp - Profile</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Your existing scripts -->
+    <script src="utils-firebase.js"></script>  <!-- REPLACE utils.js with this -->
+    <script src="matching-service-complete.js"></script>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <h2 class="nav-logo" onclick="window.location.href='activities.html'">ActivityApp</h2>
+            <div class="nav-links">
+                <button onclick="window.location.href='activities.html'" class="nav-button active">Activities</button>
+                <button onclick="window.location.href='profile.html'" class="nav-button">Profile</button>
+                <button onclick="logout()" class="nav-button">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Container -->
+    <div class="profile-container">
+        <div class="profile-card">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-banner"></div>
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <div class="avatar-fallback" id="avatarInitials">JD</div>
+                        <button class="avatar-edit" onclick="editProfile()">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.3333 2.00004C11.5083 1.82494 11.716 1.68605 11.9447 1.59129C12.1735 1.49653 12.419 1.44775 12.6667 1.44775C12.9143 1.44775 13.1598 1.49653 13.3886 1.59129C13.6174 1.68605 13.825 1.82494 14 2.00004C14.1751 2.17513 14.314 2.38278 14.4088 2.61156C14.5036 2.84034 14.5523 3.08585 14.5523 3.33337C14.5523 3.58089 14.5036 3.82641 14.4088 4.05519C14.314 4.28397 14.1751 4.49161 14 4.66671L5 13.6667L1.33333 14.6667L2.33333 11L11.3333 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <h1 class="profile-name" id="profileName">John Doe</h1>
+                        <p class="profile-email" id="profileEmail">john.doe@example.com</p>
+                        <div class="profile-meta">
+                            <span class="meta-item">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 6.66671C14 11.3334 8 15.3334 8 15.3334C8 15.3334 2 11.3334 2 6.66671C2 5.07539 2.63214 3.54925 3.75736 2.42403C4.88258 1.29881 6.40871 0.666707 8 0.666707C9.59131 0.666707 11.1174 1.29881 12.2426 2.42403C13.3679 3.54925 14 5.07539 14 6.66671Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 8.66671C9.10457 8.66671 10 7.77128 10 6.66671C10 5.56214 9.10457 4.66671 8 4.66671C6.89543 4.66671 6 5.56214 6 6.66671C6 7.77128 6.89543 8.66671 8 8.66671Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span id="profileLocation">San Francisco, CA</span>
+                            </span>
+                            <span class="meta-item">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12.6667 2.66671H3.33333C2.59695 2.66671 2 3.26366 2 4.00004V13.3334C2 14.0698 2.59695 14.6667 3.33333 14.6667H12.6667C13.403 14.6667 14 14.0698 14 13.3334V4.00004C14 3.26366 13.403 2.66671 12.6667 2.66671Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M10.6667 1.33337V4.00004M5.33333 1.33337V4.00004M2 6.66671H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span id="joinDate">Joined January 2024</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions" id="viewActions">
+                        <button onclick="editProfile()" class="btn btn-secondary">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.1667 2.50004C14.3856 2.28119 14.6454 2.10756 14.9313 1.98909C15.2171 1.87063 15.5236 1.80969 15.8333 1.80969C16.1431 1.80969 16.4496 1.87063 16.7354 1.98909C17.0213 2.10756 17.281 2.28119 17.5 2.50004C17.7189 2.71889 17.8925 2.97863 18.011 3.2645C18.1294 3.55037 18.1904 3.85689 18.1904 4.16671C18.1904 4.47652 18.1294 4.78304 18.011 5.06891C17.8925 5.35478 17.7189 5.61452 17.5 5.83337L6.25 17.0834L1.66667 18.3334L2.91667 13.75L14.1667 2.50004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Edit Profile
+                        </button>
+                    </div>
+
+                    <div class="profile-actions" id="editActions" style="display: none;">
+                        <button onclick="cancelEdit()" class="btn btn-text">Cancel</button>
+                        <button onclick="saveProfile()" class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.6 7.45801L9.16667 14.8913L5.5 11.2247" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- View Mode -->
+                <div id="viewMode">
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h3>About</h3>
+                        </div>
+                        <p class="bio-text" id="profileBio">Love exploring new activities and meeting new people!</p>
+                    </div>
+                    
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h3>Interests</h3>
+                        </div>
+                        <div class="interests-display" id="interestsDisplay">
+                            <span class="interest-badge">🥾 hiking</span>
+                            <span class="interest-badge">📷 photography</span>
+                            <span class="interest-badge">👨‍🍳 cooking</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h3>Questionnaire</h3>
+                        </div>
+                        <div id="questionnaireStatus">
+                            <!-- Will be filled dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h3>Statistics</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Activities Joined</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Events Hosted</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Connections</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Mode -->
+                <div id="editMode" style="display: none;">
+                    <form id="editProfileForm">
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h3>Personal Information</h3>
+                            </div>
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label for="editFirstName">First Name</label>
+                                    <input type="text" id="editFirstName" placeholder="First name">
+                                </div>
+                                <div class="input-group">
+                                    <label for="editLastName">Last Name</label>
+                                    <input type="text" id="editLastName" placeholder="Last name">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="editLocation">Location</label>
+                                <input type="text" id="editLocation" placeholder="Your location">
+                            </div>
+                            <div class="input-group">
+                                <label for="editAge">Age</label>
+                                <input type="number" id="editAge" placeholder="Your age" min="13" max="120">
+                            </div>
+                        </div>
+
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h3>About</h3>
+                            </div>
+                            <div class="input-group">
+                                <textarea id="editBio" rows="4" placeholder="Tell us about yourself..." maxlength="300"></textarea>
+                                <span class="char-counter"><span id="editBioCount">0</span>/300</span>
+                            </div>
+                        </div>
+                        
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h3>Interests</h3>
+                            </div>
+                            <div class="input-group">
+                                <div class="custom-input">
+                                    <input type="text" id="newInterest" placeholder="Add an interest..." maxlength="30">
+                                    <button type="button" class="btn-icon" onclick="addInterest()">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="interests-edit-list" id="interestsEditList"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="utils.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>

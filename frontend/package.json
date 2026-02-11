@@ -1,0 +1,28 @@
+{
+  "name": "beyondbinary-activityapp",
+  "version": "1.0.0",
+  "description": "A Firebase-powered social activity matching platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000",
+    "serve": "npx http-server -p 8000 -o",
+    "deploy": "firebase deploy",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only firestore:rules,storage:rules"
+  },
+  "keywords": [
+    "firebase",
+    "activity-matching",
+    "social",
+    "matching-algorithm"
+  ],
+  "author": "BeyondBinary Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/beyondbinary-activityapp"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  }
+}

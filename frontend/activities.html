@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ActivityApp - Discover Activities</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <h2 class="nav-logo" onclick="window.location.href='activities.html'">ActivityApp</h2>
+            <div class="nav-links">
+                <button onclick="window.location.href='activities.html'" class="nav-button active">Activities</button>
+                <button onclick="window.location.href='profile.html'" class="nav-button">Profile</button>
+                <button onclick="logout()" class="nav-button">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="activities-container">
+        <!-- Sidebar Filters -->
+        <aside class="activities-sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Filters</h3>
+                
+                <!-- Search -->
+                <div class="input-group">
+                    <label>Search</label>
+                    <input type="text" id="searchInput" placeholder="Search activities...">
+                </div>
+                
+                <!-- Interest Filter -->
+                <div class="input-group">
+                    <label>Interest</label>
+                    <select id="interestFilter">
+                        <option value="">All Interests</option>
+                    </select>
+                </div>
+                
+                <!-- Date Filter -->
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="dateFilter">
+                </div>
+                
+                <!-- Location Filter -->
+                <div class="input-group">
+                    <label>Location</label>
+                    <input type="text" id="locationFilter" placeholder="Location...">
+                </div>
+                
+                <!-- View Type -->
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="recommended" onclick="switchView('recommended')">
+                        ✨ For You
+                    </button>
+                    <button class="view-btn" data-view="all" onclick="switchView('all')">
+                        📋 All Activities
+                    </button>
+                    <button class="view-btn" data-view="joined" onclick="switchView('joined')">
+                        ✓ My Activities
+                    </button>
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="createNewActivity()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 4.16669V15.8334M4.16667 10H15.8333" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Create Activity
+                </button>
+            </div>
+            
+            <!-- Matched Users -->
+            <div class="sidebar-section" id="matchedUsersSection">
+                <h3 class="sidebar-title">People Like You</h3>
+                <div id="matchedUsersList" class="matched-users-list">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="activities-main">
+            <!-- Header -->
+            <div class="activities-header">
+                <h1 id="mainTitle">Recommended For You</h1>
+                <p id="mainSubtitle">Activities matched to your interests</p>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-container" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading activities...</p>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <h3>No activities found</h3>
+                <p id="emptyMessage">Try adjusting your filters or create a new activity!</p>
+            </div>
+            
+            <!-- Activities Grid -->
+            <div id="activitiesGrid" class="activities-grid">
+                <!-- Will be populated by JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Activity Modal -->
+    <div id="createActivityModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Activity</h2>
+                <button class="modal-close" onclick="closeCreateModal()">&times;</button>
+            </div>
+            
+            <form id="createActivityForm">
+                <div class="input-group">
+                    <label for="activityTitle">Activity Title *</label>
+                    <input type="text" id="activityTitle" required placeholder="e.g., Morning Yoga in the Park">
+                </div>
+                
+                <div class="input-group">
+                    <label for="activityDescription">Description *</label>
+                    <textarea id="activityDescription" rows="4" required placeholder="Describe your activity..."></textarea>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="activityDate">Date & Time *</label>
+                        <input type="datetime-local" id="activityDate" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="activityMaxParticipants">Max Participants *</label>
+                        <input type="number" id="activityMaxParticipants" min="2" max="100" value="10" required>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="activityLocation">Location Name *</label>
+                    <input type="text" id="activityLocation" required placeholder="e.g., Golden Gate Park">
+                </div>
+                
+                <div class="input-group">
+                    <label>Interests (select all that apply) *</label>
+                    <div class="interests-grid" id="activityInterestsGrid">
+                        <!-- Will be populated by JS -->
+                    </div>
+                    <div id="selectedActivityInterests" class="selected-interests-display"></div>
+                </div>
+                
+                <div class="form-actions space-between">
+                    <button type="button" class="btn btn-text" onclick="closeCreateModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Activity Detail Modal -->
+    <div id="activityDetailModal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="detailTitle">Activity Details</h2>
+                <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+            </div>
+            
+            <div id="activityDetailContent">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="utils.js"></script>
+    <script src="activity-service.js"></script>
+    <script src="recommendation-service.js"></script>
+    <script src="matched-users.js"></script>
+    <link rel="stylesheet" href="matched-users-styles.css">
+    <script src="activities.js"></script>
+</body>
+</html>

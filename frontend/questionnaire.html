@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ActivityApp - Get to Know You</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Your existing scripts -->
+    <script src="utils-firebase.js"></script>  <!-- REPLACE utils.js with this -->
+    <script src="matching-service-complete.js"></script>
+    <!-- Navigation -->
+   <nav class="nav-bar">
+        <div class="nav-content">
+            <h2 class="nav-logo" onclick="window.location.href='activities.html'">ActivityApp</h2>
+            <div class="nav-links">
+                <button onclick="window.location.href='activities.html'" class="nav-button active">Activities</button>
+                <button onclick="window.location.href='profile.html'" class="nav-button">Profile</button>
+                <button onclick="logout()" class="nav-button">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Questionnaire Container -->
+    <div class="questionnaire-container">
+        <div class="questionnaire-card">
+            <div class="questionnaire-header">
+                <h1 class="auth-title">Get to Know You Better</h1>
+                <p class="auth-subtitle">Help us match you with the right people and activities</p>
+                <div class="progress-indicator">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text">Section <span id="currentSection">1</span> of <span id="totalSections">6</span></p>
+            </div>
+
+            <form id="questionnaireForm">
+                <!-- Section 1: Main Character Energy -->
+                <div class="question-section active" data-section="1">
+                    <div class="section-title">
+                        <span class="section-number">01</span>
+                        <h2>Your Main Character Energy</h2>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">If you were a character in a show, you'd be…</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="character_type" value="chill_side_character" required>
+                                <span class="option-text">The chill side‑character that everyone secretly loves</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="character_type" value="loud_chaotic">
+                                <span class="option-text">The loud, chaotic best friend</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="character_type" value="quiet_deep">
+                                <span class="option-text">The quiet but surprisingly deep one</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="character_type" value="overachiever">
+                                <span class="option-text">The overachiever with 47 side quests</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="character_type" value="depends_season">
+                                <span class="option-text">Depends on the season honestly</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Social battery check: after a long day you usually…</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="social_battery" value="hide_headphones" required>
+                                <span class="option-text">Hide in bed with headphones on</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="social_battery" value="one_trusted_person">
+                                <span class="option-text">Hang out with one trusted person</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="social_battery" value="vc_people">
+                                <span class="option-text">Jump on a call or VC with people</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="social_battery" value="go_out_again">
+                                <span class="option-text">Go out again because why not</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Pick your ideal "hangout" vibe:</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="hangout_vibe" value="late_night_talk" required>
+                                <span class="option-text">Late‑night heart‑to‑heart</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="hangout_vibe" value="memes_jokes">
+                                <span class="option-text">Dumb memes and unhinged jokes</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="hangout_vibe" value="gaming_watching">
+                                <span class="option-text">Gaming / watching something together</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="hangout_vibe" value="call_own_thing">
+                                <span class="option-text">Sitting in call doing our own thing</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="hangout_vibe" value="walking_talking">
+                                <span class="option-text">Walking around outside, just talking</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: What You Actually Enjoy -->
+                <div class="question-section" data-section="2">
+                    <div class="section-title">
+                        <span class="section-number">02</span>
+                        <h2>What You Actually Enjoy (When Not Doom‑Scrolling)</h2>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">You unexpectedly get a free afternoon. What are you most likely doing?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="free_afternoon" value="gaming_watching" required>
+                                <span class="option-text">Gaming or binge‑watching</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="free_afternoon" value="creative">
+                                <span class="option-text">Drawing, writing, or making something</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="free_afternoon" value="active">
+                                <span class="option-text">Gym, sports, or touching grass</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="free_afternoon" value="exploring">
+                                <span class="option-text">Café, food, or exploring the city</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="free_afternoon" value="napping">
+                                <span class="option-text">Napping. Be honest.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Which of these topics would you be happy to rant about for 30 minutes?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="rant_topic" value="media" required>
+                                <span class="option-text">Your favorite game / show / anime</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="rant_topic" value="music">
+                                <span class="option-text">Music or your playlists</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="rant_topic" value="theories">
+                                <span class="option-text">Random life theories and overthinking</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="rant_topic" value="tech">
+                                <span class="option-text">Tech / gadgets / nerdy stuff</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="rant_topic" value="food">
+                                <span class="option-text">Food. Always food.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">How busy is your life right now on a scale from "what is sleep" to "I'm chilling"?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="busy_level" value="1" required>
+                                <span class="option-text">1 = My schedule is my boss</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="busy_level" value="2">
+                                <span class="option-text">2</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="busy_level" value="3">
+                                <span class="option-text">3 = Balanced chaos</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="busy_level" value="4">
+                                <span class="option-text">4</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="busy_level" value="5">
+                                <span class="option-text">5 = Very free, please entertain me</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Texting Style -->
+                <div class="question-section" data-section="3">
+                    <div class="section-title">
+                        <span class="section-number">03</span>
+                        <h2>Texting Style: How You Terrorize Your Notifications</h2>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Your reply speed, realistically:</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="reply_speed" value="speedrunner" required>
+                                <span class="option-text">Speedrunner (minutes)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="reply_speed" value="casual">
+                                <span class="option-text">Casual player (a few hours)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="reply_speed" value="probably_today">
+                                <span class="option-text">"I'll get to it today… probably"</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="reply_speed" value="mentally_replied">
+                                <span class="option-text">"I mentally replied, does that count?"</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Your average message looks like…</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="message_length" value="short" required>
+                                <span class="option-text">"ok", "bet", "lmao"</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="message_length" value="friendly">
+                                <span class="option-text">Short but friendly sentences</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="message_length" value="medium">
+                                <span class="option-text">Medium messages with context</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="message_length" value="essays">
+                                <span class="option-text">Essays. You're basically a blog.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Which weapons do you use in conversations? (Select all that apply)</label>
+                        <div class="option-group">
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="conversation_weapons" value="emojis">
+                                <span class="option-text">Emojis and reaction images</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="conversation_weapons" value="memes">
+                                <span class="option-text">Memes and unhinged humor</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="conversation_weapons" value="oversharing">
+                                <span class="option-text">Oversharing deep thoughts at 3am</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="conversation_weapons" value="voice_notes">
+                                <span class="option-text">Voice notes</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="conversation_weapons" value="calm_text">
+                                <span class="option-text">Calm, straightforward texts</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">How do you feel about calls / VC with online friends?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="vc_feeling" value="love_random" required>
+                                <span class="option-text">Love them, I'll call randomly</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="vc_feeling" value="comfortable_first">
+                                <span class="option-text">Only after we're comfortable</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="vc_feeling" value="text_zone">
+                                <span class="option-text">Rarely; text is my safe zone</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="vc_feeling" value="scheduled">
+                                <span class="option-text">Only if scheduled like a business meeting</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">When conversations slow down, you usually…</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="convo_slow" value="panic_meme" required>
+                                <span class="option-text">Panic and send a meme</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="convo_slow" value="let_rest">
+                                <span class="option-text">Let it rest, no pressure</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="convo_slow" value="deep_question">
+                                <span class="option-text">Ask a random deep question</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="convo_slow" value="forget_reply">
+                                <span class="option-text">Forget to reply for 3 days</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Feelings, Comfort, and Emotional Chaos -->
+                <div class="question-section" data-section="4">
+                    <div class="section-title">
+                        <span class="section-number">04</span>
+                        <h2>Feelings, Comfort, and Emotional Chaos</h2>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">How deep do you like conversations to go?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="convo_depth" value="surface" required>
+                                <span class="option-text">Surface‑level, fun and chill</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="convo_depth" value="mix">
+                                <span class="option-text">A mix: jokes + occasional feelings</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="convo_depth" value="deep_talks">
+                                <span class="option-text">I secretly love deep talks</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="convo_depth" value="trauma">
+                                <span class="option-text">Immediately discussing childhood trauma (kidding… kind of)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">When something's bothering you in a friendship, you are more likely to…</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="conflict_style" value="ignore" required>
+                                <span class="option-text">Ignore it and hope it fixes itself</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="conflict_style" value="hints">
+                                <span class="option-text">Drop hints and hope they notice</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="conflict_style" value="gentle">
+                                <span class="option-text">Bring it up gently</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="conflict_style" value="direct">
+                                <span class="option-text">"Hey, can we talk about this?" energy</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Your superpower as a friend is:</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="friend_superpower" value="listening" required>
+                                <span class="option-text">Listening without judging</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="friend_superpower" value="memes">
+                                <span class="option-text">Sending the perfect meme at the perfect time</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="friend_superpower" value="advice">
+                                <span class="option-text">Giving solid advice</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="friend_superpower" value="checking_in">
+                                <span class="option-text">Checking in and remembering the small things</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="friend_superpower" value="calm_presence">
+                                <span class="option-text">Just existing calmly; people feel safe</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Are there topics you'd rather not get into with new people?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="sensitive_topics" value="yes" required>
+                                <span class="option-text">Yes, definitely a few</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sensitive_topics" value="depends">
+                                <span class="option-text">Depends how the other person brings it up</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sensitive_topics" value="open">
+                                <span class="option-text">Not really, I'm open to most things</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">If you have specific topics to avoid, list them here (optional):</label>
+                        <textarea name="topics_to_avoid" class="text-input" placeholder="E.g., politics, religion, etc." maxlength="200"></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 5: Attachment & Friendship Expectations -->
+                <div class="question-section" data-section="5">
+                    <div class="section-title">
+                        <span class="section-number">05</span>
+                        <h2>Attachment & Friendship Expectations (But Make It Relatable)</h2>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">When you click with someone, you tend to…</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="opening_up" value="slow" required>
+                                <span class="option-text">Take it slow, I need time</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="opening_up" value="bit_by_bit">
+                                <span class="option-text">Open up bit by bit</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="opening_up" value="speedrun">
+                                <span class="option-text">Trauma‑dump speedrun (with consent)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="opening_up" value="friendly_distant">
+                                <span class="option-text">Stay friendly but not super close</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Friend replies after 10 hours. What is your brain doing?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="late_reply_reaction" value="fine" required>
+                                <span class="option-text">"They're busy, it's fine."</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="late_reply_reaction" value="noticed">
+                                <span class="option-text">"Hmm, I noticed, but okay."</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="late_reply_reaction" value="overthinking">
+                                <span class="option-text">"Did I say something weird??"</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="late_reply_reaction" value="damage">
+                                <span class="option-text">Mild emotional damage.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">How much social time vs alone time do you need?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="social_alone_balance" value="1" required>
+                                <span class="option-text">1 = Talk to me every day please</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="social_alone_balance" value="2">
+                                <span class="option-text">2</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="social_alone_balance" value="3">
+                                <span class="option-text">3 = Balanced – sometime together, sometime alone</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="social_alone_balance" value="4">
+                                <span class="option-text">4</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="social_alone_balance" value="5">
+                                <span class="option-text">5 = I vanish to recharge often, don't panic</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Ideal friendship headline:</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="friendship_style" value="daily_chaos" required>
+                                <span class="option-text">"Daily chaos and constant updates"</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="friendship_style" value="few_times_week">
+                                <span class="option-text">"We talk a few times a week, super close"</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="friendship_style" value="low_maintenance">
+                                <span class="option-text">"Low‑maintenance, still feels safe and strong"</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="friendship_style" value="casual">
+                                <span class="option-text">"Mostly chill and casual"</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Who You Vibe With -->
+                <div class="question-section" data-section="6">
+                    <div class="section-title">
+                        <span class="section-number">06</span>
+                        <h2>Who You Vibe With</h2>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">You usually vibe best with people who are…</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="vibe_preference" value="similar" required>
+                                <span class="option-text">Similar to me</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="vibe_preference" value="different_balancing">
+                                <span class="option-text">Different but balancing</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="vibe_preference" value="kind">
+                                <span class="option-text">Either, if they're kind</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="vibe_preference" value="no_idea">
+                                <span class="option-text">I have no idea, surprise me</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Whose energy is easiest for you to handle long‑term?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="energy_preference" value="calm" required>
+                                <span class="option-text">Calm, steady, low drama</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="energy_preference" value="funny_chaotic">
+                                <span class="option-text">Funny and chaotic</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="energy_preference" value="soft_aware">
+                                <span class="option-text">Soft, thoughtful, emotionally aware</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="energy_preference" value="driven">
+                                <span class="option-text">Very driven / ambitious</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="energy_preference" value="adapt">
+                                <span class="option-text">I adapt; different people, different modes</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Texting frequency you're most comfortable with:</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="texting_frequency" value="daily" required>
+                                <span class="option-text">Almost daily</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="texting_frequency" value="few_times_week">
+                                <span class="option-text">A few times a week</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="texting_frequency" value="occasional">
+                                <span class="option-text">Once in a while but still close</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="texting_frequency" value="natural">
+                                <span class="option-text">No expectations, just natural</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Are you cool with international friends / different time zones?</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="timezone_preference" value="yes" required>
+                                <span class="option-text">Yes, absolutely</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="timezone_preference" value="overlap">
+                                <span class="option-text">Sure, if we have some overlapping hours</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="timezone_preference" value="similar">
+                                <span class="option-text">Prefer similar time zone</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="timezone_preference" value="not_sure">
+                                <span class="option-text">Not sure yet</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Age range you feel comfortable befriending:</label>
+                        <div class="option-group">
+                            <label class="radio-option">
+                                <input type="radio" name="age_preference" value="around_my_age" required>
+                                <span class="option-text">Mostly around my age</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="age_preference" value="few_years">
+                                <span class="option-text">Within a few years older/younger</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="age_preference" value="any_adult">
+                                <span class="option-text">Any adult age is fine</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="age_preference" value="private">
+                                <span class="option-text">I'd rather keep that private</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <label class="question-label">Final boss question: what's one thing a future friend should know about you?</label>
+                        <textarea name="final_message" id="final_message" class="text-input" placeholder="Fun facts, quirks, deal-breakers, whatever you want..." maxlength="300" required></textarea>
+                        <p class="char-counter"><span id="finalMessageCount">0</span>/300</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="questionnaire-nav">
+                    <button type="button" class="btn btn-text" id="prevBtn" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Previous</span>
+                    </button>
+                    
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        <span>Next Section</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">
+                        <span>Complete</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.6 7.45801L9.16667 14.8913L5.5 11.2247" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="utils.js"></script>
+    <script src="questionnaire.js"></script>
+</body>
+</html>
