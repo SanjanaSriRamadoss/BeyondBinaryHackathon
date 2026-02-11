@@ -24,6 +24,78 @@ let activities = [
     lat: 1.3000,
     lng: 103.8000,
     date: "2026-02-13"
+  },
+  {
+    id: 3,
+    title: "Poetry Open Mic Night",
+    interest: "Arts",
+    location: "Singapore",
+    lat: 1.3100,
+    lng: 103.8200,
+    date: "2026-02-14"
+  },
+  {
+    id: 4,
+    title: "Community Beach Cleanup",
+    interest: "Environment",
+    location: "East Coast",
+    lat: 1.3050,
+    lng: 103.9300,
+    date: "2026-02-15"
+  },
+  {
+    id: 5,
+    title: "Board Game Café Night",
+    interest: "Games",
+    location: "Bugis",
+    lat: 1.2990,
+    lng: 103.8550,
+    date: "2026-02-16"
+  },
+  {
+    id: 6,
+    title: "Photography Walk",
+    interest: "Photography",
+    location: "Marina Bay",
+    lat: 1.2830,
+    lng: 103.8600,
+    date: "2026-02-17"
+  },
+  {
+    id: 7,
+    title: "Startup Pitch Practice",
+    interest: "Entrepreneurship",
+    location: "One-North",
+    lat: 1.2995,
+    lng: 103.7876,
+    date: "2026-02-18"
+  },
+  {
+    id: 8,
+    title: "K-Pop Dance Workshop",
+    interest: "Dance",
+    location: "Orchard",
+    lat: 1.3048,
+    lng: 103.8318,
+    date: "2026-02-19"
+  },
+  {
+    id: 9,
+    title: "Mindfulness Meditation Circle",
+    interest: "Wellness",
+    location: "Tiong Bahru",
+    lat: 1.2865,
+    lng: 103.8280,
+    date: "2026-02-20"
+  },
+  {
+    id: 10,
+    title: "Language Exchange Meetup",
+    interest: "Languages",
+    location: "Chinatown",
+    lat: 1.2840,
+    lng: 103.8430,
+    date: "2026-02-21"
   }
 ];
 
