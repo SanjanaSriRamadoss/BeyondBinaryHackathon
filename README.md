@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BeyondBinary ActivityApp
 
 A Firebase-powered social activity matching platform that helps users find compatible activity partners based on preferences, interests, and personality traits.
@@ -451,3 +452,6 @@ Firebase by Google.
 ---
 
 **Happy Matching! 🎉**
+=======
+# BeyondBinaryHackathon
+>>>>>>> d33812b7baa236ee37a1c95109abaf4a4ee2152c
